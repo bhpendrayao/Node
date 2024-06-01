@@ -1,0 +1,22 @@
+extends layout/main-layout.pug
+block styles 
+    link(rel="stylesheet", href="/css/product.css")
+
+block content 
+    main
+        if prods.length>0 
+            .grid 
+            each product in prods 
+                    article.card.product-item 
+                        header.card__header 
+                            h1.product__title.center #{product.title}
+                        .card__image 
+                            img.box-fit.center(src="https://media.istockphoto.com/id/988681814/photo/volumes-situating-on-table-and-shelves.jpg?s=1024x1024&w=is&k=20&c=XBdU9n-lIOr8m1CYHcb7EuLgkmWUfxWwwcVsLTuC3_0=", alt="A Book")
+                        .card__content 
+                            h2.product__price $19.99
+                            p.product__description A very intersting book! 
+                        .card__actions.center
+                            button.btn Add to Cart         
+        else 
+            h1.center No products
+        

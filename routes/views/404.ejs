@@ -1,0 +1,44 @@
+<%- include('includes/head.ejs')%>
+    <style>
+        body{
+            padding: 0;
+            margin:0;
+        }
+      .main-header{
+        width: 100;
+        align-items: center;
+        height: 3.5rem;
+        display: flex;
+        background-color:#222119;
+        padding: 0 1.5rem;
+      }
+    .main-header__list-item
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+.main-header__item{
+    margin: 0 1rem;
+    padding: 0;
+}
+.main-header__item a{
+    text-decoration: none;
+    color:white;
+}
+.main-header__item a:hover,
+.main-header__item a:active
+{
+    color: #dbc441;
+}
+.main-header__item a:active{
+    color: #dbc441;
+}
+
+    </style>
+</head>
+<body>
+    <%-include('includes/navigation.ejs')%>
+    <h1>Page Not Found!!!</h1>
+<%-include('includes/end.ejs')%>
