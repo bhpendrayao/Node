@@ -12,14 +12,17 @@
                             <h1 class="product__title"><%=product.title%></h1>
                         </header>
                         <div class="card__image">
-                            <img class="box-fit center-img" src="https://media.istockphoto.com/id/988681814/photo/volumes-situating-on-table-and-shelves.jpg?s=1024x1024&w=is&k=20&c=XBdU9n-lIOr8m1CYHcb7EuLgkmWUfxWwwcVsLTuC3_0=" alt="A Book">
+                            <img class="box-fit center-img" src="<%=product.imageUrl%>" alt="A Book">
                         </div>
                         <div class="card__content">
-                            <h2 class="product__price">$19.99</h2>
-                            <p class="product__description">A very interesting book!</p>
+                            <h2 class="product__price">$<%=product.price%></h2>
+                            <p class="product__description"><%=product.description%></p>
                         </div>
                         <div class="card__actions">
-                            <button class="btn">Add to Cart</button>
+                            <form action="/cart" method="POST">
+                                <button class="btn" type="submit">Add to Cart</button>
+                                <input type="hidden" name="productId" value="<%= product.id%>" >
+                            </form>
                         </div>
                     </article>
                 <%}%>
