@@ -47,10 +47,10 @@ exports.postEditProduct =(req, res, next) =>{
     console.log(req.body.productId);
     const updateid =req.body.productId
     const updatetitle = req.body.title;
-    const updateimageUrl = req.body.imageUrl;
+    const updateimageurl = req.body.imageurl;
     const updateprice = req.body.price;
     const updatedescription = req.body.description;
-    const updatedproduct = new Product(updateid,updatetitle,updateimageUrl,updatedescription,updateprice);
+    const updatedproduct = new Product(updateid,updatetitle,updateimageurl,updatedescription,updateprice);
     updatedproduct.save();
     res.redirect('/admin/products')
 };
@@ -60,10 +60,9 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    console.log(description);
     const product = new Product(null,title,imageUrl,description,price);
-    product.save();
-    res.redirect('/');
+    product.save().then(()=>{res.redirect('/');}).catch(err =>{console.log(err);});
+    
 };
 
 exports.postDeleteProduct = (req,res,next) =>{
