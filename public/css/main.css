@@ -181,7 +181,6 @@ body {
 }
 
 button {
-    
     border: 1px solid #00695c;
     background-color: white;
     border-radius: 3px;
@@ -196,9 +195,11 @@ button:active {
     background-color: #00695c;
     color: white;
 }
+
 .btn-space {
     margin-right: 10px; /* Adjust the margin as needed */
 }
+
 .btn {
     display: inline-block;
     padding: 0.25rem 1rem;
@@ -209,10 +210,20 @@ button:active {
     background: white;
     border-radius: 3px;
     cursor: pointer;
-  }
-  
-  .btn:hover,
-  .btn:active {
+}
+
+.btn:hover,
+.btn:active {
     background-color: #00695c;
     color: white;
-  }
+}
+
+.inline-form {
+    display: inline-block;
+}
+
+.inline-form input,
+.inline-form button {
+    display: inline-block;
+    vertical-align: middle;
+}
