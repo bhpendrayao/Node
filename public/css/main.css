@@ -199,6 +199,9 @@ button:active {
 .btn-space {
     margin-right: 10px; /* Adjust the margin as needed */
 }
+.btn-spacee {
+    margin-right: 50px; /* Adjust the margin as needed */
+}
 
 .btn {
     display: inline-block;
@@ -218,12 +221,34 @@ button:active {
     color: white;
 }
 
+/* Change text color and adjust view for inline-form */
 .inline-form {
-    display: inline-block;
+    color: #6f1212; /* Change to your desired text color */
+    display:flexbox;
+    vertical-align: middle; /* Ensure vertical alignment */
+    margin: 0.5rem 0; /* Add some margin if needed */
 }
 
 .inline-form input,
 .inline-form button {
     display: inline-block;
     vertical-align: middle;
+    margin: 0 0.2rem; /* Adjust spacing between elements */
+}
+
+/* Additional styling for buttons within inline-form */
+.inline-form button {
+    border: 1px solid #00695c;
+    background-color: white;
+    border-radius: 3px;
+    color: #00695c;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.inline-form button:hover,
+.inline-form button:active {
+    background-color: #00695c;
+    color: white;
 }
