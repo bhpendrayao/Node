@@ -11,9 +11,9 @@
                         <div class="center">
                                 <div>
                                         <form class="inline-form" action="/deleteitem" method="POST">
-                                            <h3><%= p.title %> (<%= p.quantity %>)
+                                            <h3><%= p.productId.title %> (<%= p.quantity %>)
                                                 <span class="btn-spacee"></span>
-                                            <input type="hidden" value="<%= p._id %>" name="productId">
+                                            <input type="hidden" value="<%= p.productId._id %>" name="productId">
                                             <button class="btn" type="submit">Delete</button>
                                         </form> 
                                     </h3>

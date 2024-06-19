@@ -3,7 +3,8 @@ const { where } = require('sequelize');
 
 
 exports.getproduct = (req, res, next) => {
-  Product.fetchAll().then(products =>{
+  Product.find().then(products =>{
+    console.log(products);
     res.render('shop/product-list', 
       {
         prods: products, 
@@ -29,14 +30,7 @@ exports.getproduct = (req, res, next) => {
 
 exports.getproductdetail = (req, res, next) => {
  const prodId = req.params.productId;
- //second way
-// Product.findAll({where:{
-//   id:prodId
-// }}).then(product=>{
-//   res.render('shop/product-detail',{product:product[0],pageTitle:product[0].title,path:'/products'});
-// }).catch(err=>{console.log(err)});
- // one way
-  Product.findByPk(prodId).then(product=>{
+  Product.findById(prodId).then(product=>{
       res.render('shop/product-detail',{product:product,pageTitle:product.title,path:'/products-detail'});
   }).catch(err=>{
     console.log(err);
@@ -46,7 +40,8 @@ exports.getproductdetail = (req, res, next) => {
 
 
 exports.getindex = (req, res, next)=>{
-  Product.fetchAll().then(products =>{
+  Product.find().then(products =>{
+    console.log(products);
     res.render('shop/index', 
       {
         prods: products, 
@@ -73,8 +68,12 @@ exports.getindex = (req, res, next)=>{
 };
 
 exports.getcart = (req, res, next)=>{
-    req.user.getCart()
-    .then(products=>{
+    req.user
+    .populate('cart.items.productId')
+    .then(user=>{
+      const products = user.cart.items;
+      console.log('cart ko get');
+      console.log(products);
         res.render('shop/cart',{
                 path: '/cart',
                 pageTitle:'Your Cart',
@@ -83,13 +82,12 @@ exports.getcart = (req, res, next)=>{
     }).catch(err=>{
       console.log(err)
     });
-  
 };
 
 
 exports.postcart = (req, res, next)=>{
   const prodId = req.body.productId;
-  Product.findByPk(prodId).then(product =>{
+  Product.findById(prodId).then(product =>{
     console.log("post krne ke phele ki Id");
     return req.user.addToCart(product);
   }).then(result=>{console.log(result)
