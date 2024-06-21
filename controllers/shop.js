@@ -11,7 +11,7 @@ exports.getproduct = (req, res, next) => {
         doctitle: 'shop',
         path: '/products',
         pageTitle: 'All Product',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
       });
   }).catch(err=>{
     console.log(err);
@@ -32,7 +32,7 @@ exports.getproduct = (req, res, next) => {
 exports.getproductdetail = (req, res, next) => {
  const prodId = req.params.productId;
   Product.findById(prodId).then(product=>{
-      res.render('shop/product-detail',{product:product,pageTitle:product.title,path:'/products-detail',isAuthenticated: req.isLoggedIn});
+      res.render('shop/product-detail',{product:product,pageTitle:product.title,path:'/products-detail',isAuthenticated: req.session.isLoggedIn});
   }).catch(err=>{
     console.log(err);
   });
@@ -49,7 +49,7 @@ exports.getindex = (req, res, next)=>{
         doctitle: 'shop',
         path: '/shop',
         pageTitle: 'Shop',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
       });
   }).catch(err=>{
     console.log(err);
@@ -74,13 +74,23 @@ exports.getcart = (req, res, next)=>{
     .populate('cart.items.productId')
     .then(user=>{
       const products = user.cart.items;
-      console.log('cart ko get');
-      console.log(products);
+      const newProducts=[];
+      for (const product of products) {
+        if(product.productId!==null && product.productId !== undefined){
+            const newProduct = {
+              productId: product.productId,
+              quantity: product.quantity
+            };
+            newProducts.push(newProduct);
+            console.log(newProduct);
+          }
+      }
+      console.log('Detail tha yeh');
         res.render('shop/cart',{
                 path: '/cart',
                 pageTitle:'Your Cart',
-                products: products,
-                isAuthenticated: req.isLoggedIn
+                products: newProducts,
+                isAuthenticated: req.session.isLoggedIn
                });
     }).catch(err=>{
       console.log(err)
@@ -90,6 +100,7 @@ exports.getcart = (req, res, next)=>{
 
 exports.postcart = (req, res, next)=>{
   const prodId = req.body.productId;
+  console.log(prodId);
   Product.findById(prodId).then(product =>{
     console.log("post krne ke phele ki Id");
     return req.user.addToCart(product);
@@ -101,6 +112,8 @@ exports.postcart = (req, res, next)=>{
 
 exports.postcartdeleteproduct =(req,res,next)=>{
  const prodId=req.body.productId;
+ console.log('jisko delete krna hai uski id')
+ console.log(prodId);
  req.user.deleteitemfromcart(prodId)
  .then(result=>{
    res.redirect('/cart');
@@ -122,7 +135,7 @@ exports.getorder = (req, res, next)=>{
       path: '/orders',
       pageTitle:'/shop/orders',
       orders:orders,
-      isAuthenticated: req.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn
      })
   })
   .catch(err=>{console.log(err)});
