@@ -6,18 +6,18 @@
     <%-include('../includes/navigation.ejs')%>
     <main>
         <% if (orders.length<=0) {%>
-        <h1>Nothing there!!</h1>
+        <h1>orders.length</h1>
         <%} else {%>
             <ul class="orders">
                 <%orders.forEach(order =>{%>
                 <li class ="orders__item">
-                    <h1>Order - of <%= order.user.name%></h1>
+                    <h1>Order - of <%= order.user.userId%></h1>
                     <ul class="orders__products">
-                        <%order.items.forEach(product=>{%>
+                        <%order.products.forEach(product=>{%>
                             <li class="orders__products-item">
-                                <span class="product-title"><%= product.title %></span>
+                                <span class="product-title"><%= product.product.title %></span>
                                 [<%= product.quantity %>]
-                                <span class="product-price">price = $ <%= product.quantity %> X <%= product.price %></span>
+                                <span class="product-price">price = $ <%=product.quantity %> X <%= product.product.price %></span>
                               </li>
                         <%});%>
                     </ul>

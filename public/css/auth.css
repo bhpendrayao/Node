@@ -1,4 +1,4 @@
-.product-form {
+.login-form{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -10,25 +10,4 @@
     border-radius: 5px;
     box-shadow: 0 2px 8px rgba(92, 17, 17, 0.1);
     margin: auto; /* Ensures the form is centered */
-}
-
-.product-item {
-    width: 20rem;
-    max-width: 95%;
-    margin: 1rem;
-}
-
-.product__title {
-    font-size: 1.2rem;
-    text-align: center;
-}
-
-.product__price {
-    text-align: center;
-    color: #4d4d4d;
-    margin-bottom: 0.5rem;
-}
-
-.product__description {
-    text-align: center;
 }
