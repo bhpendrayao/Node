@@ -87,10 +87,9 @@ body {
 }
 
 #side-menu-toggle {
-    border: 1px solid white;
     font: inherit;
     padding: 0.5rem;
-    display: block;
+    display: none;
     background: transparent;
     color: white;
     cursor: pointer;
@@ -312,4 +311,21 @@ button:active {
 .inline-form button:active {
     background-color: #00695c;
     color: white;
+}
+.user-message{
+    margin: auto;
+    width: 90%;
+    padding-top:0.5rem;
+    margin-top: 2rex;
+    margin-bottom: 1rex;
+    border-radius: 3px;
+    border: 1px solid #4753f1;
+    background-color: rgb(178, 178, 239);
+    text-align: center;
+}
+.user-message{
+    border-color: #ff0000;
+    background-color: rgb(239, 105, 105);
+    color: rgb(0, 0, 0);
+    text-decoration: dashed;
 }
