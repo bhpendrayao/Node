@@ -11,7 +11,7 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.getproducts = (req, res, next) => {
     //sequelize
-    Product.find()
+    Product.find({userId:req.user._id})
     // .select('title price -_id')
     // .populate('userId','name')
     .then(products =>{
