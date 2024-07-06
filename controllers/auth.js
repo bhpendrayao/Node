@@ -3,6 +3,8 @@ const crypto =require('crypto');
 const User = require('../models/user');
 const nodemailer=require('nodemailer');
 const mg = require('nodemailer-mailgun-transport');
+const {validationResult}=require('express-validator');
+
 const auth = {
   auth: {
     api_key: '1e4bd46f6deb10127b70238a1eaaf348-fe9cf0a8-4d242e5c',
@@ -12,6 +14,7 @@ const auth = {
 
 const transporter = nodemailer.createTransport(mg(auth));
 const bcrypt = require('bcryptjs');
+const { ValidationError } = require('sequelize');
 exports.getLogin = (req, res, next)=>{
   // const loggedIn=req.get('Cookie').split('=')[1]==='true';
   let message = req.flash('error');
@@ -24,7 +27,12 @@ exports.getLogin = (req, res, next)=>{
 res.render('auth/login',{
         path: '/login',
         pageTitle:'Login Page',
-        errorMessage:message
+        errorMessage:message,
+        oldInput:{
+          email:'',
+          password:''
+        },
+        validationErrors:[]
        });
     
   };
@@ -40,20 +48,37 @@ exports.getSignup = (req, res, next)=>{
   res.render('auth/signup',{
           path: '/signup',
           pageTitle:'SignUp Page',
-          errorMessage:message
+          errorMessage:message,
+          oldInput:{
+            email:"",
+            password:'',
+            confirmPassword:'',
+          },
+          validationErrors:[]
          });
       
     };
 exports.postSignup = (req, res, next)=>{
   const email=req.body.email;
   const password = req.body.password;
-  const confirmPassword=req.body.confirmPassword;
-  User.findOne({email:email}).then(userDoc=>{
-    if(userDoc){
-      req.flash('error','E-mail Already in use');
-      return res.redirect('/signup');
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty())
+    {
+      console.log(errors.array());
+        return res.status(422).render('auth/signup',{
+          path: '/signup',
+          pageTitle:'SignUp Page',
+          errorMessage:errors.array()[0].msg,
+          oldInput:{
+            email:email,
+            password:password,
+            confirmPassword:req.body.confirmPassword
+          },
+          validationErrors:errors.array()
+         });
     }
-    return bcrypt
+bcrypt
     .hash(password,12)
     .then(hashedPassword=>{
       const user = new User({
@@ -71,23 +96,45 @@ exports.postSignup = (req, res, next)=>{
         html: '<b>Wow second try</b>'
       });
     }).catch(err=>{
-      console.log("mail ka error");
-      console.log(err);
-    })
-  }).catch(err=>{
-    console.log(err);
-  });
+        const error = new Error(err);
+        error.httpStatusCode=500;
+        return next(error);
+    });
 };
 
   exports.postLogin = (req, res, next)=>{
        // res.setHeader('Set-Cookie','loggedIn=true;HttpOnly');
        const email=req.body.email;
        const password=req.body.password;
+
+       const errors=validationResult(req);
+       if(!errors.isEmpty())
+        {
+          return res.status(422).render('auth/login',{
+            path: '/login',
+            pageTitle:'Login Page',
+            errorMessage:errors.array()[0].msg,
+            oldInput:{
+              email:email,
+              password:password
+            },
+            validationErrors:errors.array()
+           });
+        }
        User.findOne({email:email})
        .then(user=>{
         if(!user){
           req.flash('error','Invalid email.');
-          return res.redirect('/login');
+          return res.status(422).render('auth/login',{
+            path: '/login',
+            pageTitle:'Login Page',
+            errorMessage:'Invalid email',
+            oldInput:{
+              email:email,
+              password:password
+            },
+            validationErrors:[]
+           });
         }
         bcrypt.compare(password,user.password).then(domatch=>{
           if(domatch){
@@ -97,15 +144,25 @@ exports.postSignup = (req, res, next)=>{
                res.redirect('/');
             });
           }
-          req.flash('error','Invalid Password.');
-          return res.redirect('/login');
+          return res.status(422).render('auth/login',{
+            path: '/login',
+            pageTitle:'Login Page',
+            errorMessage:'Invalid Password',
+            oldInput:{
+              email:email,
+              password:password
+            },
+            validationErrors:[]
+           });
         }).catch(err=>{
           console.log(err);
           res.redirect('/login');
         });  
        }).catch(err=>{
-         console.log(err);
-       });
+        const error = new Error(err);
+        error.httpStatusCode=500;
+        return next(error);
+    });
     };
 exports.postLogout = (req, res, next)=>{
             // res.setHeader('Set-Cookie','loggedIn=true;HttpOnly');
@@ -157,8 +214,10 @@ exports.postReset=(req,res,next)=>{
         });
       }
     ).catch(err=>{
-      console.log(err);
-    });
+      const error = new Error(err);
+      error.httpStatusCode=500;
+      return next(error);
+  });
   });
 };
 
@@ -181,8 +240,10 @@ exports.getNewPassword=(req,res,next)=>{
     });
 
   }).catch(err=>{
-    console.log(err);
-  });
+    const error = new Error(err);
+    error.httpStatusCode=500;
+    return next(error);
+});
   
 };
 
@@ -204,6 +265,8 @@ exports.postNewPassword=(req,res,next)=>{
     res.redirect('/login');
   })
   .catch(err=>{
-    console.log(err);
-  });
+    const error = new Error(err);
+    error.httpStatusCode=500;
+    return next(error);
+});
 };

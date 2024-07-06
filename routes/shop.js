@@ -22,4 +22,6 @@ router.get('/products/:productId',shopcontroller.getproductdetail);
 
 router.get('/orders',isAuth,shopcontroller.getorder);
 
+router.get('/orders/:orderId',isAuth,shopcontroller.getInvoice);
+
 module.exports = router;

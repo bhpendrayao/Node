@@ -1,6 +1,9 @@
 const Product = require('../models/product');
 const { where } = require('sequelize');
 const Order = require('../models/order');
+const fs = require('fs');
+const path = require('path');
+const PDFDocument = require('pdfkit');
 
 exports.getproduct = (req, res, next) => {
   Product.find().then(products =>{
@@ -13,8 +16,10 @@ exports.getproduct = (req, res, next) => {
         pageTitle: 'All Product'
       });
   }).catch(err=>{
-    console.log(err);
-  });
+    const error = new Error(err);
+    error.httpStatusCode=500;
+    return next(error);
+});
   //SQL 
   // Product.fetchAll().then(([rows, fieldData])=>{
   //   res.render('shop/product-list', 
@@ -33,8 +38,10 @@ exports.getproductdetail = (req, res, next) => {
   Product.findById(prodId).then(product=>{
       res.render('shop/product-detail',{product:product,pageTitle:product.title,path:'/products-detail'});
   }).catch(err=>{
-    console.log(err);
-  });
+    const error = new Error(err);
+    error.httpStatusCode=500;
+    return next(error);
+});
  
 };
 
@@ -50,8 +57,10 @@ exports.getindex = (req, res, next)=>{
         pageTitle: 'Shop'
       });
   }).catch(err=>{
-    console.log(err);
-  });
+    const error = new Error(err);
+    error.httpStatusCode=500;
+    return next(error);
+});
   // USED IN MYSQL
   // Product.fetchAll().then(([rows, fieldData])=>{
   //   res.render('shop/index', 
@@ -90,8 +99,10 @@ exports.getcart = (req, res, next)=>{
                 products: newProducts,
                });
     }).catch(err=>{
-      console.log(err)
-    });
+      const error = new Error(err);
+      error.httpStatusCode=500;
+      return next(error);
+  });
 };
 
 
@@ -116,8 +127,10 @@ exports.postcartdeleteproduct =(req,res,next)=>{
    res.redirect('/cart');
  })
  .catch(err=>{
-  console.log(err);
- })
+        const error = new Error(err);
+        error.httpStatusCode=500;
+        return next(error);
+    });
 //  Product.findbyid(prodId,product=>{
 //    Cart.deleteproduct(prodId, product.price);
 //    res.redirect('/cart');
@@ -133,8 +146,12 @@ exports.getorder = (req, res, next)=>{
       pageTitle:'/shop/orders',
       orders:orders,
      })
-  })
-  .catch(err=>{console.log(err)});
+  }).
+  catch(err=>{
+    const error = new Error(err);
+    error.httpStatusCode=500;
+    return next(error);
+});
   
 };
 
@@ -159,5 +176,57 @@ exports.postOrder=(req,res,next)=>{
       
     }).then(()=>{
       res.redirect('/orders');
-}).catch(err=>{console.log(err)});
+}).catch(err=>{
+  const error = new Error(err);
+  error.httpStatusCode=500;
+  return next(error);
+});
+};
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  Order.findById(orderId).then(order=>{
+    if(!order){
+      return next(new Error('No Order found.'));
+    }
+    if(order.user.userId.toString() !== req.user._id.toString()){
+          return next(new Error('Unauthorized'));
+    }
+    const invoiceName = 'invoice-' + orderId + '.pdf';
+    const invoicePath = path.join('data', 'invoices', invoiceName);
+  
+
+    const pdfDoc = new PDFDocument();
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+    pdfDoc.pipe(fs.createWriteStream(invoicePath));
+    pdfDoc.pipe(res);
+
+
+    pdfDoc.fontSize(26).text('Invoice',{
+      underline:true,
+      align:'center'
+    });
+    pdfDoc.text('--------------------');
+    let totalsum=0;
+    order.products.forEach(prod=>{
+      totalsum  += prod.quantity*prod.product.price;
+        pdfDoc.fontSize(14).text(prod.product.title + ' -> ' + prod.quantity + ' X ' + '$' + prod.product.price);
+    });
+    pdfDoc.text('Total Price:  $'+totalsum);
+    pdfDoc.end();
+    // fs.readFile(invoicePath, (err, data) => {
+    //   if (err) {
+    //     return next(err);
+    //   }
+    //   res.setHeader('Content-Type', 'application/pdf');
+    //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+    //   res.send(data);
+    // });   THIS IS READING THE FILE
+    // const file=fs.createReadStream(invoicePath);
+    // res.setHeader('Content-Type', 'application/pdf');
+    //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+    //   file.pipe(res); // stream
+
+  }).catch(err=>next(err));
 };
