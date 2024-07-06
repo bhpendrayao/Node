@@ -66,7 +66,7 @@ exports.postAddProduct = (req, res, next) => {
     product.save()
     .then(result =>{
         console.log(result);
-        res.redirect('admin/products');
+        res.redirect('/admin/products');
     }).catch(err=>{
         // return res.status(500).render('admin/edit-product', {
         //     pageTitle: 'Add product',
