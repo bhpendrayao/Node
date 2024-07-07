@@ -32,7 +32,7 @@ router.post('/edit-product',
     .trim(),
     isAuth,admincontroller.postEditProduct);
 router.get('/edit-product/:productId',isAuth,admincontroller.getEditProduct);
-router.post('/delete-product',isAuth,admincontroller.postDeleteProduct);
+router.delete('/product/:productId',isAuth,admincontroller.deleteProduct);
 
 
 module.exports = router; 
